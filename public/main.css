@@ -1,0 +1,16 @@
+.btn{
+    margin-top: 10px;
+    margin-left: 5px;
+}
+.edit{
+    margin-top:0px;
+    margin-left: 0px;
+}
+
+.task-table{
+    margin-top: 10px;
+}
+
+#taskAddStatus{
+    color: brown;
+}
