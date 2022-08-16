@@ -1,5 +1,4 @@
 const buttons = document.getElementsByClassName("display")
-const taskTable = document.getElementById("table").getElementsByTagName('tbody')[0];
 const addForm = document.getElementById('addForm')
 const editForm = document.getElementById('editForm')
 const taskAddStatus = document.getElementById('taskAddStatus')
@@ -7,6 +6,8 @@ const taskEditStatus = document.getElementById('taskEditStatus')
 const taskStatus =document.getElementById('taskStatus')
 const modalBtn = document.getElementById('addNewTask')
 const modal = document.getElementById('addTask')
+const toDo=document.getElementById("to-do")
+const inProgress=document.getElementById("in-progress")
 document.getElementById("boardDisplay").onclick = function () {
     location.href = "/board.html";
 };
@@ -20,8 +21,6 @@ Array.from(buttons).forEach(button => {
         button.style.color="white"
     })
 });
-
-
 
 addForm.addEventListener('submit',async(e)=>{
     e.preventDefault()
@@ -52,54 +51,39 @@ addForm.addEventListener('submit',async(e)=>{
 })
 
 async function showTasks(){
-    taskTable.innerHTML=''
         const {
             data: { tasks },
           } = await axios.get('/api/v1/tasks')
         console.log(tasks)
         const allTasks = tasks
       .map((task,index) => {
+        let content=""
         const {_id, name, assignedTo, dueDate, status } = task
-        var newRow = taskTable.insertRow();
-        // Insert a cell at the end of the row
-        let cell1 = newRow.insertCell(0);
-        let cell2 = newRow.insertCell(1);
-        let cell3 = newRow.insertCell(2);
-        let cell4 = newRow.insertCell(3);
-        let cell5 = newRow.insertCell(4);
-        let cell6 = newRow.insertCell(5);
-        cell1.innerHTML = index + 1;
-        cell2.innerHTML = name;
-        cell3.innerHTML = assignedTo;
-        cell4.innerHTML = new Date(dueDate).toLocaleDateString('en-GB');
-        cell5.innerHTML = status
-        let editBtn = document.createElement('button')
-        editBtn.className='btn btn-outline-primary edit'
-        editBtn.style.margin=0;
-        editBtn.innerText="Edit"
-        editBtn.setAttribute('data-id','edit')
-        editBtn.addEventListener('click',()=>{
-            var taskID = _id
-            console.log('clicked'+taskID)
-           showTask(taskID)
-        })
-        cell6.append(editBtn)
-        let deleteBtn = document.createElement('button')
-        deleteBtn.className='btn btn-outline-secondary delete'
-        deleteBtn.style.marginLeft=5
-        deleteBtn.style.marginRight=0
-        deleteBtn.style.marginTop=0;
-        deleteBtn.style.marginBottom=0;
-        deleteBtn.innerText="Delete"
-        deleteBtn.setAttribute('data-id','edit')
-        deleteBtn.addEventListener('click',()=>{
-            var taskID = _id
-            console.log('clicked'+taskID)
-           deleteTask(taskID)
-        })
-        cell6.append(deleteBtn)
-      })
        
+        if(status=='to-do'){
+            content+= `<div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+           <div class="card-header">Task ${index+1}</div>
+           <div class="card-body">
+           <h5 class="card-title">${name}</h5>
+    <p class="card-text">Assigned To: ${assignedTo}</p>
+    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
+    </div>
+    </div> `
+    toDo.innerHTML+=content
+        }     
+        
+        if(status=='In Progress'){
+            content+= `<div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
+           <div class="card-header">Task ${index+1}</div>
+           <div class="card-body">
+           <h5 class="card-title">${name}</h5>
+    <p class="card-text">Assigned To: ${assignedTo}</p>
+    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
+    </div>
+    </div> `
+    inProgress.innerHTML+=content
+        } 
+})
 }
 showTasks()
 
@@ -133,8 +117,7 @@ const addEditFunction=(id)=>{
             await axios.patch(`/api/v1/tasks/${id}`, { 
                 name: taskName,
                 assignedTo: taskAssigned,
-                dueDate: dueDate.split("/").reverse().join("-"),
-                status: taskStatus.options[taskStatus.selectedIndex].text
+                dueDate: dueDate.split("/").reverse().join("-")
             })
             taskEditStatus.textContent = `success, task updated`
             taskEditStatus.classList.add('text-success')
