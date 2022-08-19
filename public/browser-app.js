@@ -113,9 +113,7 @@ const showTask = async (id) => {
         $('#taskName').val(name)
         $('#taskAssigned').val(assignedTo)
         $('#taskName').val(name)
-        if(status=="completed"){
-            $('#taskStatus').prop("checked", true)
-        }
+        $('#taskStatus').val(status)
         $('#datepicker1').datepicker("setDate", new Date(dueDate));   
         addEditFunction(_id)  
     } catch (error) {
