@@ -61,92 +61,58 @@ async function showTasks() {
     console.log(tasks)
     const allTasks = tasks
         .map((task, index) => {
-            let content = ""
-            const { _id, name, assignedTo, dueDate, status } = task
-
+             const { _id, name, assignedTo, dueDate, status } = task
             if (status == 'to-do') {
-                let id = "edit-btn" + (index)
-                content += `<div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-           <div class="card-header">Task ${index + 1}</div>
-           <div id="${id}"  class="card-body">
-           <h5 class="card-title">${name}</h5>
-    <p class="card-text">Assigned To: ${assignedTo}</p>
-    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
-    </div>
-    </div> `
-                var myPanel = $(content);
-                let editBtn = document.createElement('button')
-                editBtn.className = 'btn btn-block btn-info'
-                editBtn.style.margin = 0;
-                editBtn.innerText = "Edit"
-                editBtn.setAttribute('data-id', 'edit')
-                editBtn.addEventListener('click', () => {
-                    var taskID = _id
-                    console.log('clicked' + taskID)
-                    showTask(taskID)
-                })
-                myPanel.append(editBtn)
-                myPanel.appendTo(toDo);
-
+                renderCard(task,index,"bg-primary",toDo)
             }
 
             if (status == 'In Progress') {
-                let id = "edit-btn" + (index)
-                content += `<div class="card text-white bg-secondary mb-3" style="max-width: 18rem;">
-           <div class="card-header">Task ${index + 1}</div>
-           <div class="card-body">
-           <h5 class="card-title">${name}</h5>
-    <p class="card-text">Assigned To: ${assignedTo}</p>
-    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
-    </div>
-    </div> `
-                var myPanel = $(content);
-                let editBtn = document.createElement('button')
-                editBtn.className = 'btn btn-block btn-info'
-                editBtn.style.margin = 0;
-                editBtn.innerText = "Edit"
-                editBtn.setAttribute('data-id', 'edit')
-                editBtn.addEventListener('click', () => {
-                    var taskID = _id
-                    console.log('clicked' + taskID)
-                    showTask(taskID)
-                })
-                myPanel.append(editBtn)
-                myPanel.appendTo(inProgress);
-
-
+                renderCard(task,index,"bg-secondary",inProgress)
             }
             if (status == 'Completed') {
-                let id = "edit-btn" + (index)
-                content += `<div class="card text-white bg-success mb-3" style="max-width: 18rem;">
-           <div class="card-header">Task ${index + 1}</div>
-           <div class="card-body">
-           <h5 class="card-title">${name}</h5>
-    <p class="card-text">Assigned To: ${assignedTo}</p>
-    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
-    </div>
-    </div> `
-                var myPanel = $(content);
-                let editBtn = document.createElement('button')
-                editBtn.className = 'btn btn-block btn-info'
-                editBtn.style.margin = 0;
-                editBtn.innerText = "Edit"
-                editBtn.setAttribute('data-id', 'edit')
-                editBtn.addEventListener('click', () => {
-                    var taskID = _id
-                    console.log('clicked' + taskID)
-                    showTask(taskID)
-                })
-                myPanel.append(editBtn)
-                myPanel.appendTo(completed);
-
-
+                renderCard(task,index,"bg-success",completed)
             }
 
         })
     }
-            myFunction = (id) => {
-                console.log("here" + id)
+            renderCard = (task,index,type,statusColumn) => {
+                let content = ""
+            const { _id, name, assignedTo, dueDate, status } = task
+                content += `<div id="closeablecard" class="card text-white ${type} mb-3" style="max-width: 18rem;">
+           <div class="card-header">Task ${index + 1}
+           <div class="card-body">
+           <h5 class="card-title">${name}</h5>
+    <p class="card-text">Assigned To: ${assignedTo}</p>
+    <p class="card-text">Due Date: ${new Date(dueDate).toLocaleDateString('en-GB')}</p>
+    </div>
+    </div> `
+                var myPanel = $(content);
+                let btnGroup =$('<div class="btn-group" role="group" aria-label="BtnGroup"></div>')
+                myPanel.append(btnGroup)
+                let editBtn = document.createElement('button')
+                editBtn.className = 'btn btn-block btn-info'
+                editBtn.style.margin = 0;
+                editBtn.innerText = "Edit"
+                editBtn.setAttribute('data-id', 'edit')
+                editBtn.addEventListener('click', () => {
+                    var taskID = _id
+                    console.log('clicked' + taskID)
+                    showTask(taskID)
+                })
+                myPanel.append(editBtn)
+                let deleteBtn = document.createElement('button')
+                deleteBtn.className = 'btn btn-block btn-dark'
+                deleteBtn.style.margin = 0;
+                deleteBtn.innerText = "Delete"
+                deleteBtn.setAttribute('data-id', 'edit')
+                deleteBtn.addEventListener('click', () => {
+                    var taskID = _id
+                    console.log('clicked' + taskID)
+                    deleteTask(taskID)
+                })
+                btnGroup.append(editBtn)
+                btnGroup.append(deleteBtn)
+                myPanel.appendTo(statusColumn);
             }
 
             showTasks()
